@@ -1,5 +1,3 @@
-setwd("/home/agricolamz/work/databases/crossword/")
-
 library(tidyverse)
 library(worrrd)
 
@@ -37,8 +35,6 @@ attr(c, "clues") |>
   summarise(label = str_c(word_id, collapse = "/")) ->
   labels
 
-plot(c, solution = TRUE)  
-
 attr(c, "positions") |> 
   left_join(words_for_crossword) |> 
   left_join(duplicates) |> 
@@ -56,4 +52,24 @@ p
 
 ggsave(plot = p, 
        filename = str_c("results/", lang, "_", group, ".png"), 
+       bg = "white", width = 7, height = 7)
+
+attr(c, "positions") |> 
+  left_join(words_for_crossword) |> 
+  left_join(duplicates) |> 
+  ggplot(aes(x = j, y = i))+
+  geom_tile(fill = "grey85", color = "black", linewidth = 0.1)+
+  geom_text(aes(label = letters))+
+  geom_text(aes(label = label), 
+            size = 2, nudge_y = 0.35, nudge_x = -0.10, 
+            data = labels)+
+  coord_fixed()+
+  scale_y_reverse()+
+  theme_void() ->
+  a
+
+a
+
+ggsave(plot = a, 
+       filename = str_c("answers/", lang, "_", group, ".png"), 
        bg = "white", width = 7, height = 7)
